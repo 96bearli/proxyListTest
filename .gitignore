@@ -7,3 +7,6 @@ fund_data.csv
 ./.idea
 __pycache__
 去重.py
+build
+dist
+main.spec

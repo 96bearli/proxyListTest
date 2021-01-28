@@ -208,6 +208,9 @@ def getProxyList():
 if __name__ == '__main__':
     # 先拿到要处理的代理数据列表
     proxiesList = getProxyList()
+    # 创建空文件./proxy.txt
+    with open('./proxy.txt', 'w', encoding='utf-8') as f:
+        pass
     # 将所有代理数据列表放入先进先出FIFO队列中
     # 队列的写入和读取都是阻塞的，故在多线程情况下不会乱
     # 在不使用框架的前提下，引入多线程，提高爬取效率
