@@ -1,12 +1,12 @@
 # 说明
 
-* 从github拉取proxylist，本地验活后保存为txt文档
-* 使用多线程加快速度 
-* type可选
-* 自动去重
-* 原始地址访问失败后尝试自动更换镜像地址
+* 从github拉取proxylist，**本地验活**后保存为txt文档
+* 使用**多线程**加快速度 
+* **type可选**
+* **自动去重**
+* 原始地址访问失败后尝试**自动更换镜像**地址
 * 验证方法：~~requests.get(url="http://icanhazip.com/", proxies=Proxy)~~
-* 验证方法：telnet
+* 验证方法：**telnet**
 
 # 添加源
 
@@ -27,11 +27,12 @@
 
 # raw2_http
 # 62.171.170.82:3128
-raw2 = {"url": 'https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt',
+raw = {"url": 'https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt',
         "type": "http",
         "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
         "findPort": re.compile(r':(\d+?)\n'),
         "findType": ""}
+raws.append(raw)
 ```
 
 # 免责
