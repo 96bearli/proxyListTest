@@ -186,6 +186,7 @@ if __name__ == '__main__':
     for proxy in proxiesList:
         # proxiesList[i]也是list类型，分别存入队列
         checkDataQueue.put(proxy)
+    proxiesList = []
     # 创建一个线程锁，防止多线程写入文件时发生错乱
     mutex_lock = threading.Lock()
     # 线程数为15，在一定范围内，线程数越多，速度越快
