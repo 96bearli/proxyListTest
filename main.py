@@ -62,7 +62,7 @@ raw4 = {"url": 'https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/htt
 raw5 = {"url": 'https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt',
         "type": "https",
         "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
-        "findPort": re.compile(r':(\d+?)\n'),
+        "findPort": re.compile(r':(\d+?)\r\n'),
         "findType": ""}
 # raw6_HTTP/HTTPS
 # 203.202.245.58:80
@@ -71,7 +71,8 @@ raw6 = {"url": 'https://sunny9577.github.io/proxy-scraper/proxies.txt',
         "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
         "findPort": re.compile(r':(\d+?)\n'),
         "findType": ""}
-raws = [raw1, raw2, raw3, raw4, raw5]
+raws = [raw1, raw2, raw3, raw4, raw5, raw6]
+
 
 # 镜像，按需替换链接
 # 内地cdn
@@ -123,11 +124,11 @@ def getProxyList():
     for raw in raws:
         # print(raw["type"])
         try:
-            response = requests.get(raw["url"])
+            response = requests.get(raw["url"], timeout=3)
             print(response.content)
         except Exception as rawError:
             print(rawError)
-            input("raw%i已失效，请检查，按任意键继续" % (raws.index(raw)+1))
+            input("raw%i已失效，请检查，按任意键继续" % (raws.index(raw) + 1))
             continue
         # 分割双保险
         try:
@@ -159,7 +160,7 @@ def getProxyList():
                     ip = re.findall(raw["findIp"], line)[0]
                     port = re.findall(raw["findPort"], line)[0]
                     type = re.findall(raw["findType"], line)[0]
-                    aList=[ip, port, type]
+                    aList = [ip, port, type]
                     allList.append(aList)
                 except Exception as reError:
                     print(reError)
@@ -188,8 +189,8 @@ if __name__ == '__main__':
     proxiesList = []
     # 创建一个线程锁，防止多线程写入文件时发生错乱
     mutex_lock = threading.Lock()
-    # 线程数为15，在一定范围内，线程数越多，速度越快
-    for i in range(140):
+    # 线程数为100，在一定范围内，线程数越多，速度越快
+    for i in range(100):
         t = threading.Thread(target=checkProxy, name='LoopThread' + str(i))
         t.start()
 
