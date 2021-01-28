@@ -3,6 +3,8 @@
 * 从github拉取proxylist，本地验活后保存为txt文档
 * 使用多线程加快速度 
 * type可选
+* 自动去重
+* 原始地址访问失败后尝试自动更换镜像地址
 * 验证方法：~~requests.get(url="http://icanhazip.com/", proxies=Proxy)~~
 * 验证方法：telnet
 

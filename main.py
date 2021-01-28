@@ -7,8 +7,8 @@
 文档包含    http/https,ip:port,ping
 验证方法    requests.get(url="http://icanhazip.com/", proxies=Proxy)
 使用多线程加快速度
-type可选
-即将增加的功能 去重
+type可选 在checkProxy()    if "http" in type:  处修改
+即将增加的功能 去重>已增加
 '''
 import telnetlib
 import requests
@@ -22,56 +22,61 @@ import threading
 # 文档url+模式+匹配ip规则+匹配端口规则+匹配模式规则
 # 当type不固定时对应"mix",且默认使用的的telnet不支持ss4/ss5
 # 有需求可以自行修改checkProxy()
-# raw1 = {"url": 'https://raw.githubusercontent.com/fate0/proxylist/master/proxy.list',
-#         "type": "mix",
-#         "findIp": re.compile(r'"host": "(.+?)"'),
-#         "findPort": re.compile(r'"port": (\d+?),'),
-#         "findType": re.compile(r'"type": "(.+?)"')}
-
+# raw = {"url": 'https://raw.githubusercontent.com/fate0/proxylist/master/proxy.list',
+#        "type": "mix",
+#        "findIp": re.compile(r'"host": "(.+?)"'),
+#        "findPort": re.compile(r'"port": (\d+?),'),
+#        "findType": re.compile(r'"type": "(.+?)"')}
+# raws.append(raw)
+raws = []
 # raw1_mix
 # {"host": "3.211.65.185", "from": "proxylist", "country": "US", "port": 80, "response_time": 0.82, "export_address": ["35.193.184.18", "192.168.99.102", "54.226.33.176"], "type": "http", "anonymity": "high_anonymous"}
-raw1 = {"url": 'https://raw.githubusercontent.com/fate0/proxylist/master/proxy.list',
-        "type": "mix",
-        "findIp": re.compile(r'"host": "(.+?)"'),
-        "findPort": re.compile(r'"port": (\d+?),'),
-        "findType": re.compile(r'"type": "(.+?)"')}
+raw = {"url": 'https://raw.githubusercontent.com/fate0/proxylist/master/proxy.list',
+       "type": "mix",
+       "findIp": re.compile(r'"host": "(.+?)"'),
+       "findPort": re.compile(r'"port": (\d+?),'),
+       "findType": re.compile(r'"type": "(.+?)"')}
+raws.append(raw)
 # raw2_http
 # 62.171.170.82:3128
-raw2 = {"url": 'https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt',
-        "type": "http",
-        "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
-        "findPort": re.compile(r':(\d+?)\n'),
-        "findType": ""}
+raw = {"url": 'https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt',
+       "type": "http",
+       "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
+       "findPort": re.compile(r':(\d+?)\n'),
+       "findType": ""}
+raws.append(raw)
 # raw3_http
 # 62.171.170.82:3128
-raw3 = {"url": 'https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt',
-        "type": "http",
-        "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
-        "findPort": re.compile(r':(\d+?)\n'),
-        "findType": ""}
+raw = {"url": 'https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt',
+       "type": "http",
+       "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
+       "findPort": re.compile(r':(\d+?)\n'),
+       "findType": ""}
+raws.append(raw)
 # raw4_http
 # 178.212.54.137:8080
-raw4 = {"url": 'https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt',
-        "type": "http",
-        "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
-        "findPort": re.compile(r':(\d+?)\n'),
-        "findType": ""}
-
+raw = {"url": 'https://raw.githubusercontent.com/ShiftyTR/Proxy-List/master/http.txt',
+       "type": "http",
+       "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
+       "findPort": re.compile(r':(\d+?)\n'),
+       "findType": ""}
+raws.append(raw)
 # raw5_https
 # 103.21.161.105:6667
-raw5 = {"url": 'https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt',
-        "type": "https",
-        "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
-        "findPort": re.compile(r':(\d+?)\r\n'),
-        "findType": ""}
+raw = {"url": 'https://raw.githubusercontent.com/hookzof/socks5_list/master/proxy.txt',
+       "type": "https",
+       "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
+       "findPort": re.compile(r':(\d+?)\r\n'),
+       "findType": ""}
+raws.append(raw)
 # raw6_HTTP/HTTPS
 # 203.202.245.58:80
-raw6 = {"url": 'https://sunny9577.github.io/proxy-scraper/proxies.txt',
-        "type": "https",
-        "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
-        "findPort": re.compile(r':(\d+?)\n'),
-        "findType": ""}
-raws = [raw1, raw2, raw3, raw4, raw5, raw6]
+raw = {"url": 'https://sunny9577.github.io/proxy-scraper/proxies.txt',
+       "type": "https",
+       "findIp": re.compile(r'(\d+?\.\d+?\.\d+?\.\d+?):'),
+       "findPort": re.compile(r':(\d+?)\n'),
+       "findType": ""}
+raws.append(raw)
 
 
 # 镜像，按需替换链接
@@ -94,21 +99,21 @@ def checkProxy():
         Proxy = type + '://' + ip + ':' + port
         print(Proxy)
         try:
-            '''requests方法
+            '''requests方法，不能高并发
             rep = requests.get(url="http://icanhazip.com/", timeout=3, proxies={type: Proxy})
             repIp = rep.text.replace("\n", "")
             if repIp == ip:
             '''
-
             # 换成telnet的方式更合适
             telnetlib.Telnet(ip, port=port, timeout=3)
 
-            # 在这里选择type
+            # 在这里选择type，in筛选http/https。not in 其他，并自行修改检查方式为requests
+            # if "http" in type:
             if type == "http":
                 print("找到一条有效代理 %s" % Proxy)
                 # 申请获取锁，此过程为阻塞等待状态，直到获取锁完毕
                 mutex_lock.acquire()
-                with open('./proxy1.txt', 'a+', encoding='utf-8') as f:
+                with open('./proxy.txt', 'a+', encoding='utf-8') as f:
                     f.write(Proxy + "\n")
                 mutex_lock.release()
             else:
@@ -118,18 +123,30 @@ def checkProxy():
             print("无效")
 
 
+def reWriteList(aList):
+    # 刚开始想直接list(set(list)),报错列表不能哈希，查了一下二维列表需要先转元组
+    aList = list(set([tuple(t) for t in aList]))
+    return aList
+
+
 def getProxyList():
     allList = []
-
     for raw in raws:
-        # print(raw["type"])
+        print("-" * 20)
+        print("正在尝试获取源raw%i提供的列表" % (raws.index(raw) + 1))
         try:
             response = requests.get(raw["url"], timeout=3)
             print(response.content)
         except Exception as rawError:
             print(rawError)
-            input("raw%i已失效，请检查，按任意键继续" % (raws.index(raw) + 1))
-            continue
+            try:  # 尝试自动更换镜像
+                response = requests.get(raw["url"].replace("raw.githubusercontent.com", "raw.sevencdn.com"), timeout=3)
+                print(response.content)
+                print("raw%i原始尝试失败，自动更换镜像地址成功" % (raws.index(raw) + 1))
+            except Exception as rawError2:
+                print(rawError2)
+                input("raw%i_url已失效，请检查，可尝试自行更换，按回车继续" % (raws.index(raw) + 1))
+                continue
         # 分割双保险
         try:
             print("尝试.split('\\n')分割")
@@ -165,6 +182,19 @@ def getProxyList():
                 except Exception as reError:
                     print(reError)
                     continue
+    # 去重+统计
+    from time import sleep
+    before = len(allList)
+    if before == 0:
+        print("还是好好检查一下源的配置吧")
+        exit()
+    allList = reWriteList(allList)
+    after = len(allList)
+    print("-" * 20)
+    print("本次运行获取代理数据%i条，去重复后剩余%i条" % (before, after))
+    print("3秒后自动开始多进程验活")
+    print("-" * 20)
+    sleep(3)
     # 测试点
     # with open("./cache", "w") as f:
     #     for all in allList:
@@ -189,17 +219,7 @@ if __name__ == '__main__':
     proxiesList = []
     # 创建一个线程锁，防止多线程写入文件时发生错乱
     mutex_lock = threading.Lock()
-    # 线程数为100，在一定范围内，线程数越多，速度越快
-    for i in range(100):
+    # 线程数为500，在一定范围内，线程数越多，速度越快
+    for i in range(500):
         t = threading.Thread(target=checkProxy, name='LoopThread' + str(i))
         t.start()
-
-    # readPath = 'proxy1.txt'
-    # writePath = 'proxy.txt'
-    # lines_seen = set()
-    # outfiile = open(writePath, 'a+', encoding='utf-8')
-    # f = open(readPath, 'r', encoding='utf-8')
-    # for line in f:
-    #     if line not in lines_seen:
-    #         outfiile.write(line)
-    #         lines_seen.add(line)
