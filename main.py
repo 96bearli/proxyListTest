@@ -5,7 +5,8 @@
 '''
 思路       从github拉取proxylist，本地验活后保存为txt文档
 文档包含    http/https,ip:port,ping
-验证方法    requests.get(url="http://icanhazip.com/", proxies=Proxy)
+验证方法    requests.get(url="http://icanhazip.com/", proxies=Proxy)>划掉但仍可选，并发应减少到个位
+          默认 telnet验证
 使用多线程加快速度
 type可选 在checkProxy()    if "http" in type:  处修改
 即将增加的功能 去重>已增加
