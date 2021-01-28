@@ -5,4 +5,5 @@ cache*
 fund_data.csv
 ./venv
 ./.idea
+__pycache__
 去重.py
