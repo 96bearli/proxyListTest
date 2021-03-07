@@ -12,6 +12,7 @@
 type可选 在checkProxy()    if "http" in type:  处修改
 即将增加的功能 去重>已增加
 更改：采用双重验证方法获取高质量稳定代理（比如2500筛选100）
+
 '''
 import telnetlib
 import requests
