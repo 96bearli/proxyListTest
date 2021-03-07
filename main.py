@@ -83,7 +83,8 @@ raw = {"url": 'https://sunny9577.github.io/proxy-scraper/proxies.txt',
 raws.append(raw)
 
 
-# 镜像，按需替换链接
+# 备用cdn镜像，按需替换
+cdnUrl = "raw.sevencdn.com"
 # 内地cdn
 # proxyListUrl = 'https://raw.sevencdn.com/fate0/proxylist/master/proxy.list'
 # proxyListUrl = 'https://cdn.jsdelivr.net/gh/fate0/proxylist@master/proxy.list'
@@ -168,7 +169,7 @@ def getProxyList():
         except Exception as rawError:
             print(rawError)
             try:  # 尝试自动更换镜像
-                response = requests.get(raw["url"].replace("raw.githubusercontent.com", "raw.sevencdn.com"), timeout=3)
+                response = requests.get(raw["url"].replace("raw.githubusercontent.com", cdnUrl), timeout=3)
                 print(response.content)
                 print("raw%i原始地址尝试失败，自动更换镜像地址成功" % (raws.index(raw) + 1))
             except Exception as rawError2:
