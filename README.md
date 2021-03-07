@@ -6,7 +6,7 @@
 * **自动去重**
 * 原始地址访问失败后尝试**自动更换镜像**地址
 * 验证方法：~~requests.get(url="http://icanhazip.com/", proxies=Proxy)~~
-* 验证方法：**telnet**
+* 验证方法：**telnet+req**
 
 # 添加源
 
