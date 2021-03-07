@@ -3,8 +3,8 @@ proxy.txt
 proxy1.txt
 cache*
 fund_data.csv
-./venv
-./.idea
+venv/
+.idea/
 __pycache__
 去重.py
 build
