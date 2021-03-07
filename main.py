@@ -10,6 +10,7 @@
 使用多线程加快速度
 type可选 在checkProxy()    if "http" in type:  处修改
 即将增加的功能 去重>已增加
+更改：采用双重验证方法获取高质量稳定代理（比如2500筛选100）
 '''
 import telnetlib
 import requests
@@ -100,34 +101,49 @@ def checkProxy():
         Proxy = type + '://' + ip + ':' + port
         print(Proxy)
         try:
-            '''# requests方法，不能高并发
-            rep = requests.get(url="http://icanhazip.com/", timeout=3, proxies={type: Proxy})
-            repIp = rep.text.replace("\n", "")
-            if repIp == ip:
-                if type == "http":
-                    print("找到一条有效代理 %s" % Proxy)
-                    # 申请获取锁，此过程为阻塞等待状态，直到获取锁完毕
-                    mutex_lock.acquire()
-                    with open('./proxy.txt', 'a+', encoding='utf-8') as f:
-                        f.write(ip+":"+port + "@HTTP\n")
-                    mutex_lock.release()
-                else:
-                    print("无效")
-            '''
-            # 换成telnet的方式更合适
+            # 尝试使用telnet和req结合的双重验证
             telnetlib.Telnet(ip, port=port, timeout=3)
-
-            # 在这里选择type，in筛选http/https。not in 其他，并自行修改检查方式为requests
+            # 在这里选择type，in筛选http/https。not in 或其他
             # if "http" in type:
             if type == "http":
-                print("找到一条有效代理 %s" % Proxy)
-                # 申请获取锁，此过程为阻塞等待状态，直到获取锁完毕
-                mutex_lock.acquire()
-                with open('./proxy.txt', 'a+', encoding='utf-8') as f:
-                    f.write(Proxy + "\n")
-                mutex_lock.release()
-            else:
-                print("无效")
+                rep = requests.get(url="http://icanhazip.com/", timeout=3, proxies={type: Proxy})
+                repIp = str(rep.text.replace("\n", ""))
+                if repIp in Proxy:
+                    print("双重验证后找到一条较高质量的代理,%s" % Proxy)
+                    # 申请获取锁，此过程为阻塞等待状态，直到获取锁完毕
+                    mutex_lock.acquire()
+                    with open('./proxy.txt', 'a+', encoding='utf-8') as file:
+                        file.write(Proxy+'\n')
+                    mutex_lock.release()
+
+            # 纯requests方法
+            # rep = requests.get(url="http://icanhazip.com/", timeout=3, proxies={type: Proxy})
+            # repIp = rep.text.replace("\n", "")
+            # if repIp == ip:
+            #     if type == "http":
+            #         print("找到一条有效代理 %s" % Proxy)
+            #         # 申请获取锁，此过程为阻塞等待状态，直到获取锁完毕
+            #         mutex_lock.acquire()
+            #         with open('./proxy.txt', 'a+', encoding='utf-8') as f:
+            #             f.write(Proxy + "\n")
+            #         mutex_lock.release()
+            #     else:
+            #         print("无效")
+
+            # 纯telnet的方式
+            # telnetlib.Telnet(ip, port=port, timeout=3)
+            # # 在这里选择type，in筛选http/https。not in 其他，并自行修改检查方式为requests
+            # # if "http" in type:
+            # if type == "http":
+            #     print("找到一条有效代理 %s" % Proxy)
+            #     # 申请获取锁，此过程为阻塞等待状态，直到获取锁完毕
+            #     mutex_lock.acquire()
+            #     with open('./proxy.txt', 'a+', encoding='utf-8') as f:
+            #         f.write(Proxy + "\n")
+            #     mutex_lock.release()
+            # else:
+            #     print("无效")
+
         except Exception as proxyError:
             print(proxyError)
             print("无效")
@@ -152,7 +168,7 @@ def getProxyList():
             try:  # 尝试自动更换镜像
                 response = requests.get(raw["url"].replace("raw.githubusercontent.com", "raw.sevencdn.com"), timeout=3)
                 print(response.content)
-                print("raw%i原始尝试失败，自动更换镜像地址成功" % (raws.index(raw) + 1))
+                print("raw%i原始地址尝试失败，自动更换镜像地址成功" % (raws.index(raw) + 1))
             except Exception as rawError2:
                 print(rawError2)
                 input("raw%i_url已失效，请检查，可尝试自行更换，按回车继续" % (raws.index(raw) + 1))
@@ -232,7 +248,8 @@ if __name__ == '__main__':
     proxiesList = []
     # 创建一个线程锁，防止多线程写入文件时发生错乱
     mutex_lock = threading.Lock()
-    # 线程数为500，在一定范围内，线程数越多，速度越快
+    # 线程数为500，在一定范围内，线程数越多，速度越快。
+    # 小心点，别变成ddos把验证服务器干死
     for i in range(500):
         t = threading.Thread(target=checkProxy, name='LoopThread' + str(i))
         t.start()
