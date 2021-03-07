@@ -10,3 +10,8 @@ __pycache__
 build
 dist
 main.spec
+.idea/csv-plugin.xml
+.idea/vcs.xml
+.idea
+testrequest.py
+Reptiles/

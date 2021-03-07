@@ -100,10 +100,19 @@ def checkProxy():
         Proxy = type + '://' + ip + ':' + port
         print(Proxy)
         try:
-            '''requests方法，不能高并发
+            '''# requests方法，不能高并发
             rep = requests.get(url="http://icanhazip.com/", timeout=3, proxies={type: Proxy})
             repIp = rep.text.replace("\n", "")
             if repIp == ip:
+                if type == "http":
+                    print("找到一条有效代理 %s" % Proxy)
+                    # 申请获取锁，此过程为阻塞等待状态，直到获取锁完毕
+                    mutex_lock.acquire()
+                    with open('./proxy.txt', 'a+', encoding='utf-8') as f:
+                        f.write(ip+":"+port + "@HTTP\n")
+                    mutex_lock.release()
+                else:
+                    print("无效")
             '''
             # 换成telnet的方式更合适
             telnetlib.Telnet(ip, port=port, timeout=3)
